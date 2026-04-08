@@ -5,8 +5,14 @@ from sklearn.model_selection import train_test_split
 from sklearn.metrics import r2_score
 
 # Load dataset from CSV
-# Make sure you have a file named "boston.csv" in your repo
 df = pd.read_csv("boston.csv")
+
+# Handle missing values
+# Option 1: drop rows with NaN
+df = df.dropna()
+
+# Option 2: fill NaN with column means (uncomment if you prefer this)
+# df = df.fillna(df.mean())
 
 # Select important features
 features = ['CRIM', 'RM', 'LSTAT', 'AGE', 'TAX']
@@ -26,22 +32,21 @@ y_pred = model.predict(X_test)
 # Calculate accuracy
 score = r2_score(y_test, y_pred)
 
-# UI
+# Streamlit UI
 st.title("🏠 House Price Prediction System")
 st.write("Enter house details below:")
 
 # Inputs
 CRIM = st.number_input("Crime Rate", 0.0)
 RM = st.number_input("Number of Rooms", 0.0)
-LSTAT = st.number_input("Lower Status Population (%)", 0.0)
+LSTAT = st.number_input("Lower Status Population %", 0.0)
 AGE = st.number_input("Age of House", 0.0)
 TAX = st.number_input("Property Tax Rate", 0.0)
 
-# Prediction
+# Prediction button
 if st.button("Predict Price"):
-    input_data = pd.DataFrame([[CRIM, RM, LSTAT, AGE, TAX]], columns=features)
+    input_data = [[CRIM, RM, LSTAT, AGE, TAX]]
     prediction = model.predict(input_data)
-    st.success(f"Predicted House Price: ${prediction[0]:.2f}k")
+    st.write(f"Predicted House Price: ${prediction[0]:.2f}")
+    st.write(f"Model Accuracy (R²): {score:.2f}")
 
-# Show accuracy
-st.write(f"📊 Model Accuracy (R² Score): {score:.2f}")
